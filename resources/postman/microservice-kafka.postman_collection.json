@@ -1,0 +1,67 @@
+{
+	"info": {
+		"_postman_id": "1ad5eedd-6234-4289-bd21-b07d7063abe5",
+		"name": "microservice-kafka",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:4000",
+							"host": [
+								"localhost"
+							],
+							"port": "4000"
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "main",
+			"item": [
+				{
+					"name": "ping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000",
+							"host": [
+								"localhost"
+							],
+							"port": "3000"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publishToKafka",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/publishToKafka",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"publishToKafka"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

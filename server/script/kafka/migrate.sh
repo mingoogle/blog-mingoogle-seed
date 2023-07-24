@@ -16,7 +16,7 @@ COMMAND=$2
 MIGRATION_FILE=$3
 
 if [ "${ARGUMENT_COUNT}" -eq 0 ]; then
-  echo "./migrate.sh [local/qc/stress/development/staging/production] [up/down/list] [migration file]"
+  echo "./migrate.sh [local/development/staging/production] [up/down/list] [migration file]"
   exit 1
 fi
 
@@ -26,19 +26,15 @@ elif [ "${ENV}" = "staging" ]; then
   ENV_STATE_EXT=".staging"
 elif [ "${ENV}" = "development" ]; then
   ENV_STATE_EXT=".dev"
-elif [ "${ENV}" = "qc" ]; then
-  ENV_STATE_EXT=".qc"
-elif [ "${ENV}" = "stress" ]; then
-  ENV_STATE_EXT=".stress"
 elif [ "${ENV}" = "local" ]; then
   ENV_STATE_EXT=".local"
 else
-  echo "./migrate.sh [local/qc/stress/development/staging/production] [up/down/list] [migration file]"
+  echo "./migrate.sh [local/development/staging/production] [up/down/list] [migration file]"
   exit 1
 fi
 
 if [ "${COMMAND}" != "down" -a "${COMMAND}" != "up" -a "${COMMAND}" != "list" ]; then
-  echo "./migrate.sh [local/qc/stress/development/staging/production] [up/down/list] [migration file]"
+  echo "./migrate.sh [local/development/staging/production] [up/down/list] [migration file]"
   exit 1
 fi
 
