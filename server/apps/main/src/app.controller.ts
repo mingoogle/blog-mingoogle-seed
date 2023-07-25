@@ -1,14 +1,21 @@
 import { Controller, Get, Inject, Post } from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
-
 import { AppService } from './app.service';
+
+import {
+  KafkaService,
+  KAFKA_MAP,
+  TTopicMessage,
+  KafkaTopicMessage,
+} from '@app/common';
+
+const KAFKA_PRODUCER_MAP_APP = KAFKA_MAP.main.producer.app['/app.controller'];
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     @Inject('KAFKA_SERVICE')
-    private readonly kafkaClient: ClientKafka,
+    private readonly kafkaService: KafkaService,
   ) {}
 
   @Get()
@@ -20,11 +27,26 @@ export class AppController {
   @Post('/publishToKafka')
   async publishToKafka(): Promise<any> {
     try {
-      await this.kafkaClient.connect();
-      await this.kafkaClient.emit('kafka-topic-message', {
-        message: '토픽 메세지입니다.',
-      });
-      // await this.kafkaClient.close();
+      const kafkaTopicMessage: KafkaTopicMessage = {
+        name: '민구글',
+        title: '카프카 실습2',
+        eventTime: new Date().getTime(),
+      };
+
+      const invaildKafkaTopicMessage = {
+        address: '민구글',
+        contents: '카프카 실습2',
+        eventTime: new Date().getTime(),
+      };
+
+      // NOTE: kafkaTopicMessage대신 invaildKafkaTopicMessage를 선언하면 벨리데이션 에러 발생!
+      const kafkaMessage: TTopicMessage =
+        await this.kafkaService.setTopicMessage(
+          KAFKA_PRODUCER_MAP_APP.KAFKA_TOPIC_MESSAGE,
+          kafkaTopicMessage,
+        );
+
+      await this.kafkaService.produceSingleMessage(kafkaMessage);
       return { message: 'Message published successfully' };
     } catch (err) {
       console.log('### err =>', err);

@@ -1,6 +1,6 @@
 ## Description
 
-Kafka Integration Project Based on [NestJS Documentation](https://docs.nestjs.com/microservices/kafka) - Part 1
+Kafka Integration Project Based on [NestJS Documentation](https://docs.nestjs.com/microservices/kafka) - Part 2
 
 [In this blog post](https://mingoogle.tistory.com/), we will explore how to integrate Kafka with NestJS.
 

@@ -1,30 +1,33 @@
-import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Module, Inject } from '@nestjs/common';
 
 import { LibsModule } from '@app/lib';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { LoggerService, KafkaService } from '@app/common';
 
 @Module({
-  imports: [
-    LibsModule,
-    ClientsModule.register([
-      {
-        name: 'KAFKA_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'seed',
-            brokers: ['localhost:9093'],
-          },
-          consumer: {
-            groupId: 'seed-groupId',
-          },
-        },
-      },
-    ]),
-  ],
+  imports: [LibsModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(
+    @Inject('KAFKA_SERVICE')
+    private readonly kafkaService: KafkaService,
+    private readonly logger: LoggerService,
+  ) {}
+
+  async onModuleInit(): Promise<void> {
+    const initialize = async (): Promise<void> => {
+      // kafka initialize
+      await this.kafkaService.init();
+      await this.kafkaService.produceGroupProcessor();
+      await this.kafkaService.consumeGroupProcessor();
+    };
+    try {
+      await initialize();
+    } catch (err) {
+      this.logger.warn(err, 'Initialization failed.');
+    }
+  }
+}
