@@ -1,8 +1,10 @@
 import { Controller, Get, Inject, Post } from '@nestjs/common';
 import { AppService } from './app.service';
+import { ClsService } from 'nestjs-cls';
 
 import {
   KafkaService,
+  LoggerService,
   KAFKA_MAP,
   TTopicMessage,
   KafkaTopicMessage,
@@ -13,9 +15,11 @@ const KAFKA_PRODUCER_MAP_APP = KAFKA_MAP.main.producer.app['/app.controller'];
 @Controller()
 export class AppController {
   constructor(
+    private readonly logger: LoggerService,
     private readonly appService: AppService,
     @Inject('KAFKA_SERVICE')
     private readonly kafkaService: KafkaService,
+    private readonly clsService: ClsService,
   ) {}
 
   @Get()
@@ -27,6 +31,8 @@ export class AppController {
   @Post('/publishToKafka')
   async publishToKafka(): Promise<any> {
     try {
+      const traceId = this.clsService.get('traceId');
+      this.logger.warn(`mainController traceId => ${traceId}`);
       const kafkaTopicMessage: KafkaTopicMessage = {
         name: '민구글',
         title: '카프카 실습2',
@@ -45,11 +51,15 @@ export class AppController {
           KAFKA_PRODUCER_MAP_APP.KAFKA_TOPIC_MESSAGE,
           kafkaTopicMessage,
         );
-
       await this.kafkaService.produceSingleMessage(kafkaMessage);
+
+      this.logger.warn(kafkaMessage, '[mainController] kafkaMessage');
+      console.log('### [mainController] kafkaMessage =>', kafkaMessage);
+      console.log(`### [mainController] traceId => ${traceId}`);
+
       return { message: 'Message published successfully' };
     } catch (err) {
-      console.log('### err =>', err);
+      this.logger.error(err, 'mainController error');
       return { error: 'Failed to publish message' };
     }
   }

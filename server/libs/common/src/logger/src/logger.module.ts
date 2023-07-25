@@ -6,11 +6,13 @@ import {
   ConfigurationModule,
   ConfigurationService,
 } from '../../configuration/src';
+import { ClsHookedModule } from '../../cls-hooked/src';
 
 @Module({
   providers: [LoggerService],
   exports: [LoggerService],
   imports: [
+    ClsHookedModule,
     PinoLoggerModule.forRootAsync({
       imports: [ConfigurationModule],
       inject: [ConfigurationService],

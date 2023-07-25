@@ -27,6 +27,12 @@
       "@app/common/*": [
         "libs/common/src/*"
       ],
+      "@app/interceptor": [
+        "libs/interceptor"
+      ],
+      "@app/interceptor/*": [
+        "libs/interceptor/*"
+      ]
     }
   }
 }

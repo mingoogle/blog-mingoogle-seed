@@ -1,18 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { PinoLogger } from 'nestjs-pino';
+import { ClsService } from 'nestjs-cls';
 
 type LogInfo = {
   data?: object;
   err?: object;
   message: string;
+  traceId: string;
 };
 
 @Injectable()
 export class LoggerService {
-  constructor(private readonly pinoLogger: PinoLogger) {}
+  constructor(
+    private readonly pinoLogger: PinoLogger,
+    private readonly clsService: ClsService,
+  ) {}
 
   private _format(obj: object | string, message: string = '') {
-    const result: LogInfo = { message };
+    // traceId 세팅
+    const traceId = this.clsService.get('traceId');
+
+    const result: LogInfo = { message, traceId };
     if (obj instanceof Error) {
       result.err = obj;
       return result;

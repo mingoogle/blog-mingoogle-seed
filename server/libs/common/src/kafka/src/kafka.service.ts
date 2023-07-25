@@ -1,6 +1,8 @@
 import { CustomTransportStrategy, Server } from '@nestjs/microservices';
 import { Kafka, Producer, Consumer } from 'kafkajs';
 import { Observable } from 'rxjs';
+import { ClsService } from 'nestjs-cls';
+import { set } from 'lodash';
 
 import { LoggerService } from '../../logger/src';
 import { ValidationService } from '../../validation/src';
@@ -37,6 +39,7 @@ export class KafkaService extends Server implements CustomTransportStrategy {
     private readonly kafkaConfig: TKafkaConfig,
     private readonly loggerService: LoggerService,
     private readonly validationService: ValidationService,
+    private readonly clsService: ClsService,
   ) {
     super();
   }
@@ -193,6 +196,9 @@ export class KafkaService extends Server implements CustomTransportStrategy {
     topic: T,
     message: InstanceType<(typeof TopicMessageMap)[T]>,
   ): Promise<TTopicMessage> {
+    const traceId = this.clsService.get('traceId');
+    set(message, 'traceId', traceId);
+
     // 토픽메시지 내부 검증
     try {
       await this.validationService.validate({
